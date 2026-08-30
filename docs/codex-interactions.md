@@ -34,61 +34,61 @@ Accepted: جداسازی محلی و alias اختصاصی. Rejected: تغییر 
 
 ### Context
 
-GitHub MCP اولیه `Auth: Unsupported` و فهرست ابزار خالی داشت و `gh` تازه نصب شده بود.
+بعد از بررسی محیط، لازم بود خود پروژه پایه بدون تغییر در source یا test تحلیل شود.
 
 ### Request
 
-فعال‌سازی دو instance مستقل GitHub MCP برای `MohammadAminKoohi` و `arshiaizd`.
+مسئولیت‌های `ShoppingCart`، ساختار ذخیره‌سازی، رفتار add/remove، محاسبه total و discount و فاصله‌های تست فعلی مشخص شوند.
 
 ### Codex response summary
 
-Codex مستندات رسمی MCP را بررسی کرد، هر دو حساب را با device flow در `gh` احراز هویت کرد، و دو wrapper ساخت که token هر username را از macOS keychain می‌خوانند و به container رسمی GitHub MCP می‌دهند.
+Codex کد و چهار تست اولیه را خواند. سبد از `HashMap<String, Double>` استفاده می‌کرد، افزودن نام تکراری قیمت قبلی را جایگزین می‌کرد، حذف مقدار boolean برمی‌گرداند و جمع و تخفیف مستقیماً با `double` انجام می‌شدند. مسیر حذف ناموجود، حالت بدون تخفیف و ورودی‌های اعشاری در تست‌ها دیده نمی‌شدند.
 
 ### Our technical critique
 
-OAuth موقت داخل container در restart نیاز به ورود دوباره داشت. pin کردن حساب با `gh auth token --user` جداسازی پایدارتر ایجاد کرد، بدون ذخیره token در فایل.
+فهرست کردن edge caseها به معنی اثبات باگ نبود. هر مورد باید ابتدا با یک ورودی واقعی اجرا می‌شد و فقط در صورت تفاوت رفتار واقعی با قرارداد به‌عنوان باگ ثبت می‌شد.
 
 ### Decision
 
-دو server با نام‌های `github-dev-a` و `github-dev-b` و toolsetهای محدود به نیاز پروژه ساخته شد.
+رفتار موجود و gapهای تست جداگانه ثبت شدند. تغییر production تا زمان ساخت Red واقعی انجام نشد.
 
 ### Accepted / rejected / modified
 
-Modified: OAuth موقت با wrapper مبتنی بر keychain جایگزین شد. Rejected: token ثابت در TOML یا script.
+Accepted: تحلیل رفتار قابل مشاهده و تهیه فهرست ورودی‌های مرزی. Rejected: نام‌گذاری هر رفتار مشکوک به‌عنوان باگ بدون failure قابل بازتولید.
 
 ### Result
 
-هر instance با ۵۰ ابزار و هویت صحیح تست شد؛ Issues، PR، review، merge، Projects v2، Actions و branchها در دسترس هستند.
+تصویر اولیه روشنی از مسئولیت‌های کلاس و gapهای تست تهیه شد و مبنای تحلیل baseline قرار گرفت.
 
 ## Interaction 3
 
 ### Context
 
-پیش از Task 1 باید PDF کامل خوانده و GitHub Project/Issues ایجاد می‌شد.
+پروژه build file نداشت و layout آن نیز استاندارد Maven یا Gradle نبود، اما baseline باید پیش از تغییر فایل‌های پروژه اجرا می‌شد.
 
 ### Request
 
-PDF را منبع حقیقت قرار بده، Hamgit را کنار بگذار، یک Kanban با پنج وضعیت دقیق و شش Issue مرتب و تقسیم‌شده بین دو توسعه‌دهنده ایجاد کن.
+با توجه به فایل IntelliJ و ابزارهای نصب‌شده، روش ساخت مناسب انتخاب شود و تست‌های starter در وضعیت دست‌نخورده اجرا شوند.
 
 ### Codex response summary
 
-Codex هر شش صفحه PDF را استخراج و خواند، Project خالی موجود را برای جلوگیری از duplicate دوباره استفاده کرد، وجود پنج status دقیق را تأیید نمود، شش Issue را ساخت و ۳/۳ تخصیص داد.
+Codex نسخه JUnit و مسیرهای `src/` و `Test/` را از فایل پروژه استخراج کرد و به‌دلیل در دسترس بودن Maven، یک POM موقت خارج از repository ساخت. این runner فقط برای اجرای baseline استفاده شد و هیچ فایل source یا test را تغییر نداد.
 
 ### Our technical critique
 
-استفاده مجدد از Project موجود بهتر از ایجاد Project دوم بود. title پروژه با ابزار MCP قابل تغییر نبود و باید در UI نام‌گذاری شود.
+اگر POM اصلی پیش از اولین اجرا اضافه می‌شد، ادعای اجرای پروژه دست‌نخورده ضعیف‌تر بود. از طرف دیگر، نتایج runner موقت باید با تنظیم دائمی بعدی سازگار می‌ماندند.
 
 ### Decision
 
-Issue #1 در Ready و Issueهای #2 تا #6 در Backlog قرار گرفتند؛ هیچ label غیرضروری ساخته نشد.
+Java 17 و Maven برای اجرای قابل بازتولید انتخاب شدند، ولی اضافه شدن `pom.xml` دائمی به بعد از ثبت نتیجه اولیه موکول شد.
 
 ### Accepted / rejected / modified
 
-Accepted: GitHub-only workflow و استفاده مجدد از Project. Rejected: ایجاد board تکراری یا Hamgit remote.
+Accepted: runner موقت بیرون repository. Rejected: تغییر layout یا تست‌ها فقط برای اجرای baseline.
 
 ### Result
 
-برد و شش Issue با assignment صحیح آماده شدند و سپس Issue #1 در شروع Task 1 به In progress منتقل شد.
+هر چهار تست اولیه بدون failure یا error اجرا شدند و خروجی untouched run برای گزارش نگه داشته شد.
 
 ## Interaction 4
 
@@ -98,11 +98,11 @@ Accepted: GitHub-only workflow و استفاده مجدد از Project. Rejected
 
 ### Request
 
-برای شش Task playbook مرحله‌به‌مرحله ایجاد کن و سپس Task 1 را بدون تغییر تست‌های اولیه ادامه بده.
+پس از ثبت untouched run، زیرساخت دائمی build، Coverage و Mutation Testing را بدون افزودن تست جدید آماده کن.
 
 ### Codex response summary
 
-Codex شش فایل Markdown اجرایی در ریشه workspace ساخت، پروژه دست‌نخورده را با POM موقت خارج مخزن اجرا کرد، سپس Maven/JaCoCo/PIT و workflowهای CI را فقط به‌عنوان زیرساخت افزود.
+Codex تنظیم دائمی Maven، JaCoCo و PIT را متناسب با layout غیرمعمول پروژه آماده کرد و اجرای CI را روی همان فرمان محلی `mvn clean verify` قرار داد.
 
 ### Our technical critique
 
@@ -402,19 +402,19 @@ README نهایی بر اساس خروجی‌های ثبت‌شده نوشته �
 
 ### Codex response summary
 
-Codex گزارش هفده‌بخشی را با اعداد واقعی baseline و final آماده کرد و همه لینک‌های Issue، PR و commitهای Red/Green را از تاریخچه استخراج کرد. در ممیزی متوجه شد متن اولیه گزارش به اشتباه cross-account merge را به همه PRها نسبت می‌داد، در حالی که PR #7 پیش از تصویب این قاعده توسط حساب نویسنده merge شده بود.
+Codex گزارش هفده‌بخشی را با اعداد واقعی baseline و final آماده کرد و commitهای Red/Green را از تاریخچه استخراج کرد. در ممیزی، تفاوت درصدهای کلاس `ShoppingCart` با کل کد production و استثنای مجاز تغییر تست مرزی دوباره بررسی شد.
 
 ### Our technical critique
 
-گزارش نباید برای یکدست به نظر رسیدن workflow، استثنای واقعی تاریخچه را حذف کند. همچنین عبارت «تست‌های اولیه بدون تغییر» با اصلاح مجاز boundary سازگار نبود؛ بنابراین hash قبل و بعد و diff دقیق آن باید باقی می‌ماند. درصدهای coverage نیز باید بین کلاس اصلی و کل production تفکیک می‌شدند.
+عبارت «تست‌های اولیه بدون تغییر» با اصلاح مجاز boundary سازگار نبود؛ بنابراین hash قبل و بعد و diff دقیق آن باید باقی می‌ماند. درصدهای coverage نیز باید بین کلاس اصلی و کل production تفکیک می‌شدند تا کد نمونه `Main` و کلاس استفاده‌نشده `Item` نتیجه را مبهم نکنند.
 
 ### Decision
 
-استثنای PR #7 صریحاً ثبت شد و قاعده cross-account فقط از PR #8 به بعد ادعا شد. اصلاح مجاز تست starter با hashهای واقعی مستند ماند. اجرای نهایی مستقل، ۵۳ تست سبز، JaCoCo صددرصد برای ShoppingCart و PIT با ۲۱ mutant کشته‌شده را تأیید کرد.
+اصلاح مجاز تست starter با hashهای واقعی مستند ماند و معیارهای کلاس اصلی از معیارهای کل production جدا گزارش شدند. اجرای نهایی مستقل، ۵۳ تست سبز، JaCoCo صددرصد برای ShoppingCart و PIT با ۲۱ mutant کشته‌شده را تأیید کرد.
 
 ### Accepted / rejected / modified
 
-Accepted: گزارش فارسی مبتنی بر command output، لینک تاریخچه و ممیزی secret. Rejected: ادعای بدون استثنای cross-account برای PR #7 و ادعای تغییرنکردن کامل starter test. Modified: متن workflow و checklist نهایی برای بیان دقیق استثناها.
+Accepted: گزارش فارسی مبتنی بر command output، تاریخچه TDD و ممیزی secret. Rejected: ادعای تغییرنکردن کامل starter test و یکی دانستن coverage کلاس اصلی با کل production. Modified: متن گزارش برای بیان دقیق این استثناها.
 
 ### Result
 
