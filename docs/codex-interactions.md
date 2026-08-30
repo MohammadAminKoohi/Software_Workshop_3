@@ -389,3 +389,33 @@ Accepted: assertion مستقیم return حذف ناموجود، parameterized th
 ### Result
 
 ۵۳ تست پاس شدند؛ ShoppingCart به Line/Branch/Method صددرصد رسید و PIT هر ۲۱ mutant را کشت. survivor یا no-coverage باقی نماند.
+
+## Interaction 14
+
+### Context
+
+در Task 6 باید گزارش فارسی فقط از داده‌های واقعی repository ساخته می‌شد و پیش از PR نهایی، قابلیت بازتولید، تاریخچه TDD، وضعیت تست اولیه و جداسازی حساب‌ها دوباره بررسی می‌شد.
+
+### Request
+
+README نهایی بر اساس خروجی‌های ثبت‌شده نوشته شود، سپس clean build، JaCoCo، PIT، Git history، تغییر فایل تست اولیه و نبود secret یا artifact ناخواسته ممیزی شوند.
+
+### Codex response summary
+
+Codex گزارش هفده‌بخشی را با اعداد واقعی baseline و final آماده کرد و همه لینک‌های Issue، PR و commitهای Red/Green را از تاریخچه استخراج کرد. در ممیزی متوجه شد متن اولیه گزارش به اشتباه cross-account merge را به همه PRها نسبت می‌داد، در حالی که PR #7 پیش از تصویب این قاعده توسط حساب نویسنده merge شده بود.
+
+### Our technical critique
+
+گزارش نباید برای یکدست به نظر رسیدن workflow، استثنای واقعی تاریخچه را حذف کند. همچنین عبارت «تست‌های اولیه بدون تغییر» با اصلاح مجاز boundary سازگار نبود؛ بنابراین hash قبل و بعد و diff دقیق آن باید باقی می‌ماند. درصدهای coverage نیز باید بین کلاس اصلی و کل production تفکیک می‌شدند.
+
+### Decision
+
+استثنای PR #7 صریحاً ثبت شد و قاعده cross-account فقط از PR #8 به بعد ادعا شد. اصلاح مجاز تست starter با hashهای واقعی مستند ماند. اجرای نهایی مستقل، ۵۳ تست سبز، JaCoCo صددرصد برای ShoppingCart و PIT با ۲۱ mutant کشته‌شده را تأیید کرد.
+
+### Accepted / rejected / modified
+
+Accepted: گزارش فارسی مبتنی بر command output، لینک تاریخچه و ممیزی secret. Rejected: ادعای بدون استثنای cross-account برای PR #7 و ادعای تغییرنکردن کامل starter test. Modified: متن workflow و checklist نهایی برای بیان دقیق استثناها.
+
+### Result
+
+README با تاریخچه واقعی هم‌خوان شد، `mvn clean verify` با ۵۳ تست پاس شد، PIT امتیاز ۱۰۰٪ داد و بررسی فایل‌های tracked هیچ secret یا artifact ساخت را نشان نداد.
