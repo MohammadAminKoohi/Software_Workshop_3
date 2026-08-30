@@ -4,9 +4,19 @@ import java.util.Map;
 
 public class ShoppingCart {
 
+    private static final int MAX_ITEM_COUNT = 10;
     private Map<String, Double> items = new HashMap<>();
 
     public void addItem(String name, double price) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("item name must not be blank");
+        }
+        if (!Double.isFinite(price) || price <= 0) {
+            throw new IllegalArgumentException("price must be finite and greater than zero");
+        }
+        if (!items.containsKey(name) && items.size() >= MAX_ITEM_COUNT) {
+            throw new IllegalStateException("shopping cart is full");
+        }
         items.put(name, price);
     }
 
