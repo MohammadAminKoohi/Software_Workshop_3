@@ -359,3 +359,33 @@ Accepted: تست‌های پارامتریک برای گروه ورودی نام
 ### Result
 
 کل suite شامل ۴۰ تست پاس شد. Coverage کلاس به Line 97.06%، Branch 94.44% و Method 100% رسید؛ PIT بیست mutant از بیست‌ویک mutant را کشت.
+
+## Interaction 13
+
+### Context
+
+در شروع Task 5، Coverage کلاس بسیار بالا بود اما PIT هنوز یک mutant بدون پوشش در `removeItem` گزارش می‌کرد.
+
+### Request
+
+گپ‌های واقعی بر اساس JaCoCo/PIT بررسی شوند، تست‌های boundary و چندمرحله‌ای فقط در صورت ارزش رفتاری اضافه شوند و survivorهای مهم تحلیل گردند.
+
+### Codex response summary
+
+Codex mutant دقیق `false → true` برای حذف نام ناموجود را از XML گزارش پیدا کرد. سپس یک suite پیشرفته شامل حذف ناموجود/تکراری، مرز تخفیف، عدم compound، توالی‌های add-update-remove، duplicate، اعشار، مقدار بزرگ و capacity طراحی کرد.
+
+### Our technical critique
+
+تست کردن فقط خط uncovered می‌توانست score را بالا ببرد ولی هدف Task 5 را کامل نمی‌کرد. سناریوهای چندمرحله‌ای invariantهای state را بررسی می‌کنند. در عین حال، تست `Main` یا `Item` فقط برای افزایش درصد کل پروژه و استفاده از Mockito بدون dependency رد شد.
+
+### Decision
+
+سیزده execution رفتارمحور بدون تغییر production اضافه شد. نتیجه JaCoCo و PIT دوباره از reportهای واقعی استخراج و با baseline مقایسه شد.
+
+### Accepted / rejected / modified
+
+Accepted: assertion مستقیم return حذف ناموجود، parameterized threshold و سناریوهای stateful. Rejected: تست مصنوعی IDE code، mock کردن ShoppingCart و assertionهای بی‌هدف برای score.
+
+### Result
+
+۵۳ تست پاس شدند؛ ShoppingCart به Line/Branch/Method صددرصد رسید و PIT هر ۲۱ mutant را کشت. survivor یا no-coverage باقی نماند.
