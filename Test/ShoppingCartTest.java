@@ -24,14 +24,14 @@ public class ShoppingCartTest {
 
 
     @Test
-    public void testDiscountAtBoundary_WRONG() {
+    public void testDiscountAtBoundary() {
         ShoppingCart cart = new ShoppingCart();
         cart.addItem("A", 40);
         cart.addItem("B", 60);
 
         double discounted = cart.getTotalWithDiscount();
 
-        assertEquals(90.0, discounted);
+        assertEquals(100.0, discounted);
     }
 
     @Test
