@@ -329,3 +329,33 @@ Accepted: constraint محدود و قابل مشاهده روی Map فعلی. Re
 ### Result
 
 قرارداد و مقایسه پیش از تغییر test/production در `docs/business-feature.md` ثبت شد و Task 4 وارد فاز Red شد.
+
+## Interaction 12
+
+### Context
+
+قابلیت ظرفیت/validation تأیید شده بود و باید با سناریوهای valid، invalid، boundary، state و error وارد چرخه کامل TDD می‌شد.
+
+### Request
+
+Red واقعی برای ظرفیت ۱۰، overflow، duplicate، remove، ورودی نامعتبر، اولویت خطا و atomicity ساخته و سپس کمترین Green و Refactor موجه اجرا شود.
+
+### Codex response summary
+
+Codex ده test method با ۱۶ execution نوشت. Red سیزده failure ثبت کرد. Green با ثابت ظرفیت و guardهای مستقیم تکمیل شد و سپس duplication واقعی validation بین add/update در commit جداگانه به دو helper منتقل شد.
+
+### Our technical critique
+
+پاس شدن سه تست در Red مشکل نبود، چون feature suite همچنان سیزده failure رفتاری داشت. برای Green استخراج فوری helper انجام نشد تا حداقل پیاده‌سازی از cleanup جدا بماند. در Refactor نیز پیام‌های قبلی exception حفظ شدند.
+
+### Decision
+
+Green ابتدا با validation تکراری اما واضح commit شد؛ بعد از عبور کامل suite، helperهای مشترک در Refactor جداگانه ساخته شدند.
+
+### Accepted / rejected / modified
+
+Accepted: تست‌های پارامتریک برای گروه ورودی نامعتبر، state assertion شامل total/discount و Refactor واقعی duplication. Rejected: rule engine، mock و مخلوط کردن cleanup با Green.
+
+### Result
+
+کل suite شامل ۴۰ تست پاس شد. Coverage کلاس به Line 97.06%، Branch 94.44% و Method 100% رسید؛ PIT بیست mutant از بیست‌ویک mutant را کشت.

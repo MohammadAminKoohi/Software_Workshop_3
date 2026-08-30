@@ -32,3 +32,59 @@
 ## برنامه TDD
 
 ابتدا تست‌های مرز ۱۰/۱۱، duplicate در ظرفیت کامل، remove و آزاد شدن slot، نام/قیمت نامعتبر، اولویت validation و atomicity نوشته می‌شوند. سپس حداقل پیاده‌سازی در Green اضافه می‌شود. اگر validation بین `addItem` و `updateItemPrice` تکرار شود، فقط بعد از Green به helper مشترک منتقل خواهد شد.
+
+## Red
+
+در commit `ae90afd` تعداد ۱۰ test method نوشته شد که با ورودی‌های پارامتریک ۱۶ execution ایجاد می‌کنند.
+
+```bash
+mvn --batch-mode --no-transfer-progress \
+  -Dtest=ShoppingCartConstraintsTest test
+```
+
+```text
+Tests run: 16, Failures: 13, Errors: 0, Skipped: 0
+Expected IllegalArgumentException/IllegalStateException, but nothing was thrown
+BUILD FAILURE
+```
+
+سه تست در Red پاس شدند، چون Map اولیه از قبل ده item، جایگزینی duplicate و remove سپس add را از نظر مکانیکی انجام می‌داد. سیزده failure باقی‌مانده ثابت کردند policy ظرفیت و validation هنوز وجود ندارد.
+
+## Green
+
+در commit `b73a13c` ثابت ظرفیت ۱۰ و guardهای مستقیم زیر به `addItem` اضافه شدند:
+
+- validation نام؛
+- validation قیمت؛
+- رد نام جدید در حالت ظرفیت کامل؛
+- اجازه جایگزینی نام موجود با `containsKey`.
+
+```text
+Focused feature suite: 16 passed
+Complete suite: 40 passed, 0 failed, 0 errors, 0 skipped
+BUILD SUCCESS
+```
+
+پیاده‌سازی قبل از `put` همه خطاها را بررسی می‌کند؛ بنابراین failure هیچ تغییر جزئی در Map ایجاد نمی‌کند.
+
+## Refactor
+
+بعد از Green، validation نام و قیمت بین `addItem` و `updateItemPrice` تکراری بود. در commit `005fa55` این منطق به `validateItemName` و `validatePrice` منتقل شد. پارامتر description پیام‌های قبلی `price` و `new price` را نیز حفظ کرد.
+
+```text
+Focused add/update suites: 34 passed
+Complete suite after refactor: 40 passed
+BUILD SUCCESS
+```
+
+## نتیجه کیفیت پس از قابلیت
+
+```text
+ShoppingCart Line Coverage: 33/34 (97.06%)
+ShoppingCart Branch Coverage: 17/18 (94.44%)
+ShoppingCart Method Coverage: 9/9 (100%)
+PIT: 21 mutations, 20 killed, 0 survived, 1 no coverage
+Mutation score: 95.24%
+```
+
+PIT هر چهار کلاس تست ShoppingCart را وارد تحلیل کرد. تنها mutant بدون پوشش همچنان return مسیر `removeItem` برای نام ناموجود است که در Task 5 بررسی خواهد شد.
