@@ -215,7 +215,7 @@ Coverage می‌پرسد «چه چیزی اجرا شد؟» ولی Mutation Testi
 | updateItemPrice | [#3](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/3) | Amin | [#9](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/9) | merged |
 | قابلیت تجاری دوم | [#4](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/4) | Arshia | [#10](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/10) | merged |
 | کیفیت تست و Mutation | [#5](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/5) | Amin | [#11](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/11) | merged |
-| گزارش و بازتولید | [#6](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/6) | Arshia | PR نهایی | in progress |
+| گزارش و بازتولید | [#6](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/6) | Arshia | [#12](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/12) | همین PR نهایی |
 
 از squash استفاده نشد تا commitهای Red و Green در تاریخچه باقی بمانند. از PR #8 به بعد، نویسنده PR آن را merge نکرده است. PR #7 پیش از اضافه شدن این قاعده توسط حساب نویسنده merge شد. reviewهای خودکار با عنوان Automated Codex review ثبت شده‌اند و approval انسانی ساختگی ایجاد نشده است. وضعیت کارها در [GitHub Project #2](https://github.com/users/MohammadAminKoohi/projects/2) نگهداری می‌شود.
 
