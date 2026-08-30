@@ -269,3 +269,33 @@ Accepted: قرارداد پیشنهادی و حداقل ۱۰ تست پیش از 
 ### Result
 
 قرارداد پیش از هر تغییر test/production در `docs/update-item-price.md` ثبت شد و مبنای فاز Red قرار گرفت.
+
+## Interaction 10
+
+### Context
+
+قرارداد `updateItemPrice` تأیید شده بود و باید حداقل هشت تست معنادار پیش از implementation نوشته می‌شد.
+
+### Request
+
+تست‌ها همه رفتارهای تأییدشده را پوشش دهند، Red واقعی ثبت شود و Green فقط حداقل کد لازم باشد.
+
+### Codex response summary
+
+Codex پانزده test method طراحی کرد که با ورودی‌های پارامتریک ۱۸ بار اجرا می‌شوند. Red به دلیل نبود امضای `double` با ۱۵ خطای compilation ثبت شد. سپس validation و `Map.replace` به‌عنوان پیاده‌سازی حداقلی اضافه شدند.
+
+### Our technical critique
+
+تعداد تست به‌تنهایی هدف نبود؛ تست‌های جدا برای تغییر state، تخفیف، خطا و atomicity لازم بودند. استفاده از `containsKey` و سپس `put` دو lookup انجام می‌داد، در حالی که `replace` دقیقاً قرارداد no-op را فراهم می‌کند. Refactor مصنوعی بعد از Green نیز ارزش فنی نداشت.
+
+### Decision
+
+Red compilation failure مطابق PDF پذیرفته شد، چون API خواسته‌شده هنوز وجود نداشت. Green با دو guard و یک `replace` تکمیل شد و مرحله Refactor به‌صورت مستند «لازم نبود» باقی ماند.
+
+### Accepted / rejected / modified
+
+Accepted: تست‌های سناریومحور، parameterization برای گروه قیمت‌های نامعتبر و `Map.replace`. Rejected: تست‌های تکراری صرفاً برای بالا بردن count، assertion متن کامل exception و refactor بدون فایده.
+
+### Result
+
+۱۸ execution متمرکز و کل suite شامل ۲۴ تست پاس شدند. Coverage کلاس به Line 96.15%، Branch 92.86% و Method 100% رسید و PIT سیزده mutant از چهارده mutant را کشت.
