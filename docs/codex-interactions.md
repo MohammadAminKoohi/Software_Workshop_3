@@ -239,3 +239,33 @@ Accepted: اصلاح محدود pattern. Rejected: اعتماد صرف به exit
 ### Result
 
 PIT دو کلاس تست را کشف کرد و با ۹ mutant، تعداد ۸ killed، صفر survived و یک no-coverage با موفقیت پایان یافت.
+
+## Interaction 9
+
+### Context
+
+پیش از تست‌نویسی برای `updateItemPrice`، PDF چند ورودی مبهم را مطرح کرده بود و stub موجود نیز امضای `int` داشت.
+
+### Request
+
+قرارداد کامل متد، شامل رفتار نام ناموجود، ورودی نامعتبر، duplicate، اعشار، مقدار بزرگ و اثر خطا بر وضعیت، قبل از Red برای تأیید ارائه شود.
+
+### Codex response summary
+
+Codex از امضای PDF، مثال‌های کامنت‌شده و ساختار Map یک قرارداد پیشنهادی ساخت: update برای نام موجود، no-op برای نام ناموجود معتبر، exception برای نام blank و قیمت غیرمثبت/غیرمحدود، validation پیش از lookup و حفظ کامل وضعیت در شکست.
+
+### Our technical critique
+
+رفتار no-op برای نام ناموجود صرفاً حدس نبود و با تست نمونه پروژه پشتیبانی می‌شد. در مقابل، پذیرش قیمت صفر با عبارت PDF درباره ورودی نامعتبر سازگار نبود. وابستگی تست‌ها به متن دقیق exception نیز شکننده تشخیص داده شد.
+
+### Decision
+
+کاربر همه بندهای قرارداد را تأیید کرد. نام‌ها دقیق و case-sensitive باقی می‌مانند، duplicateها طبق Map یک entry دارند و API مورد نیاز از `double` استفاده می‌کند.
+
+### Accepted / rejected / modified
+
+Accepted: قرارداد پیشنهادی و حداقل ۱۰ تست پیش از implementation. Rejected: ساخت کالای جدید در update، تغییر return type، rounding دلخواه و assertion روی متن کامل خطا.
+
+### Result
+
+قرارداد پیش از هر تغییر test/production در `docs/update-item-price.md` ثبت شد و مبنای فاز Red قرار گرفت.
