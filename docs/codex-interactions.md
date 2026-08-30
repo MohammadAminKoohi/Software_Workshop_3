@@ -299,3 +299,63 @@ Accepted: تست‌های سناریومحور، parameterization برای گر�
 ### Result
 
 ۱۸ execution متمرکز و کل suite شامل ۲۴ تست پاس شدند. Coverage کلاس به Line 96.15%، Branch 92.86% و Method 100% رسید و PIT سیزده mutant از چهارده mutant را کشت.
+
+## Interaction 11
+
+### Context
+
+برای قابلیت تجاری دوم، PDF دو مسیر ruleهای تخفیف ترکیبی و validation/constraint را پیشنهاد می‌کرد.
+
+### Request
+
+هر دو گزینه از نظر ارزش TDD و پیچیدگی معماری مقایسه شوند و پیش از implementation یک گزینه دقیق برای تأیید ارائه شود.
+
+### Codex response summary
+
+Codex توضیح داد که composable discountها در مدل فعلی به rule abstraction، ترتیب اجرا، category و جلوگیری از double-discount نیاز دارند. در مقابل، محدودیت ظرفیت ده نام متمایز همراه با validation ورودی، boundary و atomicity را روی ساختار Map فعلی قابل تست می‌کند.
+
+### Our technical critique
+
+صرف اضافه کردن validation مشابه Task 3 قابلیت تجاری کافی نبود. اضافه شدن مرز ظرفیت، رفتار duplicate در حالت full و remove سپس add، سناریوهای stateful و مستقل ایجاد می‌کند. عدد ظرفیت و نوع خطا نیز باید قبل از تست ثابت می‌شدند.
+
+### Decision
+
+گزینه B با ظرفیت ۱۰ نام متمایز، `IllegalStateException` برای overflow، `IllegalArgumentException` برای ورودی نامعتبر و حفظ atomicity پیشنهاد شد. کاربر با دستور «continue» اجرای همین پیشنهاد را تأیید کرد.
+
+### Accepted / rejected / modified
+
+Accepted: constraint محدود و قابل مشاهده روی Map فعلی. Rejected: rule engine، category و priority بدون نیاز واقعی. Modified: validation تنها به‌عنوان بخشی از policy کامل ظرفیت پذیرفته شد، نه یک قابلیت مستقل کم‌عمق.
+
+### Result
+
+قرارداد و مقایسه پیش از تغییر test/production در `docs/business-feature.md` ثبت شد و Task 4 وارد فاز Red شد.
+
+## Interaction 12
+
+### Context
+
+قابلیت ظرفیت/validation تأیید شده بود و باید با سناریوهای valid، invalid، boundary، state و error وارد چرخه کامل TDD می‌شد.
+
+### Request
+
+Red واقعی برای ظرفیت ۱۰، overflow، duplicate، remove، ورودی نامعتبر، اولویت خطا و atomicity ساخته و سپس کمترین Green و Refactor موجه اجرا شود.
+
+### Codex response summary
+
+Codex ده test method با ۱۶ execution نوشت. Red سیزده failure ثبت کرد. Green با ثابت ظرفیت و guardهای مستقیم تکمیل شد و سپس duplication واقعی validation بین add/update در commit جداگانه به دو helper منتقل شد.
+
+### Our technical critique
+
+پاس شدن سه تست در Red مشکل نبود، چون feature suite همچنان سیزده failure رفتاری داشت. برای Green استخراج فوری helper انجام نشد تا حداقل پیاده‌سازی از cleanup جدا بماند. در Refactor نیز پیام‌های قبلی exception حفظ شدند.
+
+### Decision
+
+Green ابتدا با validation تکراری اما واضح commit شد؛ بعد از عبور کامل suite، helperهای مشترک در Refactor جداگانه ساخته شدند.
+
+### Accepted / rejected / modified
+
+Accepted: تست‌های پارامتریک برای گروه ورودی نامعتبر، state assertion شامل total/discount و Refactor واقعی duplication. Rejected: rule engine، mock و مخلوط کردن cleanup با Green.
+
+### Result
+
+کل suite شامل ۴۰ تست پاس شد. Coverage کلاس به Line 97.06%، Branch 94.44% و Method 100% رسید؛ PIT بیست mutant از بیست‌ویک mutant را کشت.

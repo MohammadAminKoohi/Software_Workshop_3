@@ -4,9 +4,15 @@ import java.util.Map;
 
 public class ShoppingCart {
 
+    private static final int MAX_ITEM_COUNT = 10;
     private Map<String, Double> items = new HashMap<>();
 
     public void addItem(String name, double price) {
+        validateItemName(name);
+        validatePrice(price, "price");
+        if (!items.containsKey(name) && items.size() >= MAX_ITEM_COUNT) {
+            throw new IllegalStateException("shopping cart is full");
+        }
         items.put(name, price);
     }
 
@@ -40,13 +46,23 @@ public class ShoppingCart {
     }
 
     public void updateItemPrice(String name, double newPrice) {
+        validateItemName(name);
+        validatePrice(newPrice, "new price");
+        items.replace(name, newPrice);
+    }
+
+    private void validateItemName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("item name must not be blank");
         }
-        if (!Double.isFinite(newPrice) || newPrice <= 0) {
-            throw new IllegalArgumentException("new price must be finite and greater than zero");
+    }
+
+    private void validatePrice(double price, String description) {
+        if (!Double.isFinite(price) || price <= 0) {
+            throw new IllegalArgumentException(
+                    description + " must be finite and greater than zero"
+            );
         }
-        items.replace(name, newPrice);
     }
 
 }
