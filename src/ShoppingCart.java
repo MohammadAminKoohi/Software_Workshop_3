@@ -28,7 +28,9 @@ public class ShoppingCart {
     public double getTotalWithDiscount() {
         double total = getTotal();
         if (total > 100) {
-            return total * 0.9;
+            return BigDecimal.valueOf(total)
+                    .multiply(BigDecimal.valueOf(0.9))
+                    .doubleValue();
         }
         return total;
     }
