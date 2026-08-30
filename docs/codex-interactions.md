@@ -299,3 +299,33 @@ Accepted: تست‌های سناریومحور، parameterization برای گر�
 ### Result
 
 ۱۸ execution متمرکز و کل suite شامل ۲۴ تست پاس شدند. Coverage کلاس به Line 96.15%، Branch 92.86% و Method 100% رسید و PIT سیزده mutant از چهارده mutant را کشت.
+
+## Interaction 11
+
+### Context
+
+برای قابلیت تجاری دوم، PDF دو مسیر ruleهای تخفیف ترکیبی و validation/constraint را پیشنهاد می‌کرد.
+
+### Request
+
+هر دو گزینه از نظر ارزش TDD و پیچیدگی معماری مقایسه شوند و پیش از implementation یک گزینه دقیق برای تأیید ارائه شود.
+
+### Codex response summary
+
+Codex توضیح داد که composable discountها در مدل فعلی به rule abstraction، ترتیب اجرا، category و جلوگیری از double-discount نیاز دارند. در مقابل، محدودیت ظرفیت ده نام متمایز همراه با validation ورودی، boundary و atomicity را روی ساختار Map فعلی قابل تست می‌کند.
+
+### Our technical critique
+
+صرف اضافه کردن validation مشابه Task 3 قابلیت تجاری کافی نبود. اضافه شدن مرز ظرفیت، رفتار duplicate در حالت full و remove سپس add، سناریوهای stateful و مستقل ایجاد می‌کند. عدد ظرفیت و نوع خطا نیز باید قبل از تست ثابت می‌شدند.
+
+### Decision
+
+گزینه B با ظرفیت ۱۰ نام متمایز، `IllegalStateException` برای overflow، `IllegalArgumentException` برای ورودی نامعتبر و حفظ atomicity پیشنهاد شد. کاربر با دستور «continue» اجرای همین پیشنهاد را تأیید کرد.
+
+### Accepted / rejected / modified
+
+Accepted: constraint محدود و قابل مشاهده روی Map فعلی. Rejected: rule engine، category و priority بدون نیاز واقعی. Modified: validation تنها به‌عنوان بخشی از policy کامل ظرفیت پذیرفته شد، نه یک قابلیت مستقل کم‌عمق.
+
+### Result
+
+قرارداد و مقایسه پیش از تغییر test/production در `docs/business-feature.md` ثبت شد و Task 4 وارد فاز Red شد.
