@@ -239,3 +239,63 @@ Accepted: اصلاح محدود pattern. Rejected: اعتماد صرف به exit
 ### Result
 
 PIT دو کلاس تست را کشف کرد و با ۹ mutant، تعداد ۸ killed، صفر survived و یک no-coverage با موفقیت پایان یافت.
+
+## Interaction 9
+
+### Context
+
+پیش از تست‌نویسی برای `updateItemPrice`، PDF چند ورودی مبهم را مطرح کرده بود و stub موجود نیز امضای `int` داشت.
+
+### Request
+
+قرارداد کامل متد، شامل رفتار نام ناموجود، ورودی نامعتبر، duplicate، اعشار، مقدار بزرگ و اثر خطا بر وضعیت، قبل از Red برای تأیید ارائه شود.
+
+### Codex response summary
+
+Codex از امضای PDF، مثال‌های کامنت‌شده و ساختار Map یک قرارداد پیشنهادی ساخت: update برای نام موجود، no-op برای نام ناموجود معتبر، exception برای نام blank و قیمت غیرمثبت/غیرمحدود، validation پیش از lookup و حفظ کامل وضعیت در شکست.
+
+### Our technical critique
+
+رفتار no-op برای نام ناموجود صرفاً حدس نبود و با تست نمونه پروژه پشتیبانی می‌شد. در مقابل، پذیرش قیمت صفر با عبارت PDF درباره ورودی نامعتبر سازگار نبود. وابستگی تست‌ها به متن دقیق exception نیز شکننده تشخیص داده شد.
+
+### Decision
+
+کاربر همه بندهای قرارداد را تأیید کرد. نام‌ها دقیق و case-sensitive باقی می‌مانند، duplicateها طبق Map یک entry دارند و API مورد نیاز از `double` استفاده می‌کند.
+
+### Accepted / rejected / modified
+
+Accepted: قرارداد پیشنهادی و حداقل ۱۰ تست پیش از implementation. Rejected: ساخت کالای جدید در update، تغییر return type، rounding دلخواه و assertion روی متن کامل خطا.
+
+### Result
+
+قرارداد پیش از هر تغییر test/production در `docs/update-item-price.md` ثبت شد و مبنای فاز Red قرار گرفت.
+
+## Interaction 10
+
+### Context
+
+قرارداد `updateItemPrice` تأیید شده بود و باید حداقل هشت تست معنادار پیش از implementation نوشته می‌شد.
+
+### Request
+
+تست‌ها همه رفتارهای تأییدشده را پوشش دهند، Red واقعی ثبت شود و Green فقط حداقل کد لازم باشد.
+
+### Codex response summary
+
+Codex پانزده test method طراحی کرد که با ورودی‌های پارامتریک ۱۸ بار اجرا می‌شوند. Red به دلیل نبود امضای `double` با ۱۵ خطای compilation ثبت شد. سپس validation و `Map.replace` به‌عنوان پیاده‌سازی حداقلی اضافه شدند.
+
+### Our technical critique
+
+تعداد تست به‌تنهایی هدف نبود؛ تست‌های جدا برای تغییر state، تخفیف، خطا و atomicity لازم بودند. استفاده از `containsKey` و سپس `put` دو lookup انجام می‌داد، در حالی که `replace` دقیقاً قرارداد no-op را فراهم می‌کند. Refactor مصنوعی بعد از Green نیز ارزش فنی نداشت.
+
+### Decision
+
+Red compilation failure مطابق PDF پذیرفته شد، چون API خواسته‌شده هنوز وجود نداشت. Green با دو guard و یک `replace` تکمیل شد و مرحله Refactor به‌صورت مستند «لازم نبود» باقی ماند.
+
+### Accepted / rejected / modified
+
+Accepted: تست‌های سناریومحور، parameterization برای گروه قیمت‌های نامعتبر و `Map.replace`. Rejected: تست‌های تکراری صرفاً برای بالا بردن count، assertion متن کامل exception و refactor بدون فایده.
+
+### Result
+
+۱۸ execution متمرکز و کل suite شامل ۲۴ تست پاس شدند. Coverage کلاس به Line 96.15%، Branch 92.86% و Method 100% رسید و PIT سیزده mutant از چهارده mutant را کشت.

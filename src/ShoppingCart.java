@@ -39,6 +39,14 @@ public class ShoppingCart {
         return items.size();
     }
 
-    public void updateItemPrice(String name, int newPrice) {}
+    public void updateItemPrice(String name, double newPrice) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("item name must not be blank");
+        }
+        if (!Double.isFinite(newPrice) || newPrice <= 0) {
+            throw new IllegalArgumentException("new price must be finite and greater than zero");
+        }
+        items.replace(name, newPrice);
+    }
 
 }
