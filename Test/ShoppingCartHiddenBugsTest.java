@@ -12,4 +12,12 @@ public class ShoppingCartHiddenBugsTest {
 
         assertEquals(0.3, cart.getTotal());
     }
+
+    @Test
+    void decimalDiscountHasStableResult() {
+        ShoppingCart cart = new ShoppingCart();
+        cart.addItem("Headphones", 100.22);
+
+        assertEquals(90.198, cart.getTotalWithDiscount());
+    }
 }
