@@ -139,3 +139,14 @@ Refactor جداگانه‌ای انجام نشد. بیرون کشیدن یک abs
 3. قیمت ۱۰۰٫۲۲: خطای ضرب دودویی در محاسبه تخفیف.
 
 هر مورد Red و Green جداگانه دارد و پس از هر Green، کل مجموعه تست‌ها دوباره اجرا شده است.
+
+### بررسی نهایی پیش از Pull Request
+
+```text
+Maven clean verify: BUILD SUCCESS
+Tests: 6 passed, 0 failed, 0 errors, 0 skipped
+PIT test classes discovered: 2
+PIT mutations: 9 total, 8 killed, 0 survived, 1 no coverage
+```
+
+در بررسی اولیه مشخص شد filter مربوط به PIT فقط `ShoppingCartTest` را انتخاب می‌کند و تست جدید را نمی‌بیند. در commit `180ba29` الگو به `ShoppingCart*Test*` تغییر کرد؛ بعد از آن PIT هر دو کلاس تست را وارد تحلیل کرد. مورد بدون پوشش همان مسیر حذف کالای ناموجود است و به این سه اصلاح ارتباطی ندارد؛ تحلیل کامل survivor/no-coverageها برای Task 5 نگه داشته شده است.

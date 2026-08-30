@@ -209,3 +209,33 @@ Accepted: ورودی تک‌قلمی و اصلاح موضعی. Rejected: یکی 
 ### Result
 
 Red اختلاف دقیق را ثبت کرد؛ Green تست متمرکز و suite شش‌تستی را پاس کرد. سه چرخه مستقل Task 2 اکنون کامل هستند.
+
+## Interaction 8
+
+### Context
+
+پس از تکمیل سه باگ، اجرای PIT فقط یک کلاس تست را گزارش کرد، با اینکه پروژه دو کلاس تست داشت.
+
+### Request
+
+پیش از PR بررسی شود که CI، Coverage و Mutation Testing واقعاً تست‌های جدید را اجرا می‌کنند.
+
+### Codex response summary
+
+Codex تنظیم `targetTests` را بررسی کرد و دید الگوی `ShoppingCartTest*` با `ShoppingCartHiddenBugsTest` match نمی‌شود. الگو به `ShoppingCart*Test*` تغییر کرد و PIT دوباره اجرا شد.
+
+### Our technical critique
+
+موفق بودن فرمان PIT به‌تنهایی کافی نبود؛ تعداد کلاس‌های کشف‌شده نشان می‌داد گزارش ناقص است. حذف کامل filter هم ممکن بود در آینده تست‌های نامرتبط را وارد این تحلیل کند.
+
+### Decision
+
+filter حفظ، اما به‌اندازه لازم گسترده شد تا همه کلاس‌های تست ShoppingCart را پوشش دهد.
+
+### Accepted / rejected / modified
+
+Accepted: اصلاح محدود pattern. Rejected: اعتماد صرف به exit code یا حذف کامل target filter.
+
+### Result
+
+PIT دو کلاس تست را کشف کرد و با ۹ mutant، تعداد ۸ killed، صفر survived و یک no-coverage با موفقیت پایان یافت.
