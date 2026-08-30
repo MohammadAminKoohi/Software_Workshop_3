@@ -23,19 +23,21 @@ status: NO_COVERAGE
 
 ## تست‌های اضافه‌شده
 
-فایل `ShoppingCartAdvancedScenariosTest` در commit `ee02067` اضافه شد و ۱۳ execution دارد:
+فایل `ShoppingCartAdvancedScenariosTest` در commit `ee02067` اضافه شد. این فایل ۱۱ test method دارد و تست پارامتری مرز تخفیف با سه ورودی اجرا می‌شود؛ بنابراین در مجموع ۱۳ execution ایجاد می‌کند. هیچ تستی فقط برای بالا بردن عدد Coverage نوشته نشد و هر مورد یک رفتار قابل مشاهده را محافظت می‌کند:
 
-- سبد خالی؛
-- حذف نام ناموجود و ثابت ماندن state؛
-- حذف دوباره یک کالا؛
-- چند بار خواندن تخفیف بدون compound شدن یا تغییر total پایه؛
-- مقادیر ۹۹٫۹۹، ۱۰۰ و ۱۰۰٫۰۱ در اطراف مرز تخفیف؛
-- توالی add → update → discount؛
-- توالی add → remove → update بدون زنده شدن دوباره کالا؛
-- چرخه duplicate → update → remove؛
-- اعشار در update و remove؛
-- قیمت `Double.MAX_VALUE` و محدود ماندن نتیجه تخفیف؛
-- ناموفق بودن remove در سبد پر بدون آزاد کردن capacity.
+| تست | چرا نوشته شد؟ | رفتار یا خطایی که بررسی می‌کند |
+|---|---|---|
+| `emptyCartHasZeroState` | حالت پایه سبد در تست‌های قبلی به‌صورت کامل بررسی نشده بود. | سبد تازه باید count صفر و total و discounted total برابر صفر داشته باشد. |
+| `removingMissingItemReturnsFalseWithoutChangingCart` | PIT مسیر حذف نام ناموجود را بدون پوشش گزارش کرده و mutant تغییر `false` به `true` را ساخته بود. | حذف نام ناموجود باید `false` برگرداند و count، total و discount را تغییر ندهد. |
+| `removingSameItemTwiceReportsSecondRemovalAsMissing` | یک حذف موفق به‌تنهایی رفتار فراخوانی تکراری را مشخص نمی‌کرد. | حذف اول موفق و حذف دوم ناموفق است و پس از آن سبد خالی باقی می‌ماند. |
+| `readingDiscountRepeatedlyDoesNotCompoundOrChangeBaseTotal` | ممکن بود getter تخفیف state را تغییر دهد یا هر بار تخفیف دیگری روی نتیجه قبلی اعمال کند. | چند بار خواندن discount باید نتیجه یکسان بدهد و total پایه و count را دست‌نخورده نگه دارد. |
+| `discountBehaviorAroundThreshold` | خطای باگ اول دقیقاً در boundary رخ داده بود و فقط بررسی یک طرف مرز کافی نبود. | سه مقدار ۹۹٫۹۹، ۱۰۰ و ۱۰۰٫۰۱ نشان می‌دهند تخفیف فقط برای مقدار بیشتر از ۱۰۰ اعمال می‌شود. |
+| `addUpdateAndDiscountSequenceUsesLatestState` | تست‌های واحد جداگانه تضمین نمی‌کردند چند عملیات متوالی از state جدید استفاده کنند. | بعد از add و update، total و discount باید از آخرین قیمت‌ها محاسبه شوند و عبور معکوس از مرز تخفیف درست باشد. |
+| `removedItemIsNotRecreatedByUpdate` | قرارداد update نام ناموجود no-op بود و باید بعد از یک remove واقعی نیز حفظ می‌شد. | update روی کالای حذف‌شده نباید آن را دوباره بسازد یا state را تغییر دهد. |
+| `duplicateAddUpdateAndRemoveFollowSingleEntryLifecycle` | استفاده از Map برای duplicate یک قرارداد رفتاری مهم ایجاد می‌کند که در یک چرخه کامل بررسی نشده بود. | add تکراری، update و remove باید همگی روی همان entry کار کنند و count هیچ‌گاه به دو نرسد. |
+| `decimalValuesRemainStableAcrossUpdateAndRemoval` | دو باگ اعشاری قبلی ممکن بود پس از ترکیب update و remove دوباره ظاهر شوند. | جمع ۰٫۱ و ۰٫۲ و state باقی‌مانده پس از حذف باید بدون خطای دودویی قابل مشاهده محاسبه شوند. |
+| `largeFinitePriceKeepsFiniteDiscount` | تست‌های معمول رفتار نزدیک بیشینه `double` را نشان نمی‌دادند. | `Double.MAX_VALUE` باید به‌عنوان قیمت محدود پذیرفته شود و تخفیف آن نیز محدود و کمتر از total باقی بماند. |
+| `failedRemovalDoesNotFreeCapacity` | بررسی جداگانه remove و capacity تضمین نمی‌کرد failure ظرفیت را به اشتباه تغییر ندهد. | حذف ناموجود در سبد پر نباید slot آزاد کند و افزودن نام یازدهم همچنان باید exception بدهد. |
 
 Mockito استفاده نشد، چون `ShoppingCart` هیچ dependency خارجی یا collaborator قابل جداسازی ندارد. Mock کردن خود کلاس فقط تست implementation می‌ساخت و fault detection را بهتر نمی‌کرد.
 

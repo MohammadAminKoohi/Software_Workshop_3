@@ -4,7 +4,7 @@
 
 در این آزمایش یک سبد خرید کوچک را مرحله‌به‌مرحله بررسی و توسعه دادیم. هدف فقط رسیدن به تعداد زیادی تست نبود؛ می‌خواستیم تاریخچه Git نشان دهد هر رفتار چگونه تحلیل شده، چه تستی آن را آشکار کرده و حداقل تغییر لازم برای درست شدنش چه بوده است.
 
-کار در شش Issue و روی branchهای جدا انجام شد. هر Task از مسیر Pull Request، اجرای CI و بازبینی خودکار مشخص عبور کرده است. توسعه بین دو حساب `MohammadAminKoohi` و `arshiaizd` تقسیم شد. قانون review/merge با حساب دیگر از Task 2 به بعد رعایت شد؛ PR اول پیش از مطرح شدن این قانون توسط همان حساب نویسنده merge شده بود و این مورد را به‌عنوان استثنا پنهان نکرده‌ایم.
+کار در شش Issue و روی branchهای جدا انجام شد. هر Task از مسیر Pull Request و اجرای CI عبور کرد و توسعه بین دو حساب `MohammadAminKoohi` و `arshiaizd` تقسیم شد.
 
 ## ۲. ساختار پروژه پایه
 
@@ -151,13 +151,21 @@ void updateItemPrice(String itemName, double newPrice)
 
 در Task 5 به‌جای اضافه کردن تست بر اساس حدس، گزارش JaCoCo و XML خروجی PIT بررسی شد. یک mutant غیرمعادل باقی مانده بود که return حذف نام ناموجود را از `false` به `true` تبدیل می‌کرد.
 
-در commit `ee02067` سیزده اجرای جدید برای این موارد اضافه شد:
+در commit `ee02067` تعداد ۱۱ test method اضافه شد که با سه ورودی تست پارامتری، در مجموع ۱۳ execution دارد. دلیل و هدف هر تست در جدول زیر آمده است:
 
-- حذف ناموجود و حذف دوباره؛
-- عدم compound شدن تخفیف؛
-- مرزهای ۹۹٫۹۹، ۱۰۰ و ۱۰۰٫۰۱؛
-- سناریوهای add → update → discount و add → remove → update؛
-- duplicate، اعشار، قیمت بسیار بزرگ و capacity پس از حذف ناموفق.
+| تست | دلیل نوشتن و هدف رفتاری |
+|---|---|
+| `emptyCartHasZeroState` | تثبیت invariant سبد تازه: count، total و discount همگی صفر هستند. |
+| `removingMissingItemReturnsFalseWithoutChangingCart` | پوشش mutant حذف ناموجود؛ نتیجه باید `false` باشد و state تغییر نکند. |
+| `removingSameItemTwiceReportsSecondRemovalAsMissing` | مشخص کردن رفتار حذف تکراری؛ بار دوم باید ناموفق و بدون اثر باشد. |
+| `readingDiscountRepeatedlyDoesNotCompoundOrChangeBaseTotal` | اطمینان از pure بودن getter و جلوگیری از compound شدن تخفیف یا تغییر total پایه. |
+| `discountBehaviorAroundThreshold` | آزمون دو طرف و خود مرز با مقادیر ۹۹٫۹۹، ۱۰۰ و ۱۰۰٫۰۱. |
+| `addUpdateAndDiscountSequenceUsesLatestState` | بررسی اینکه توالی add/update/discount از آخرین state و قیمت استفاده می‌کند. |
+| `removedItemIsNotRecreatedByUpdate` | تضمین no-op بودن update برای کالایی که قبلاً حذف شده است. |
+| `duplicateAddUpdateAndRemoveFollowSingleEntryLifecycle` | بررسی چرخه کامل duplicate در Map و ثابت ماندن count روی یک entry. |
+| `decimalValuesRemainStableAcrossUpdateAndRemoval` | جلوگیری از بازگشت خطاهای اعشاری در یک سناریوی چندمرحله‌ای update/remove. |
+| `largeFinitePriceKeepsFiniteDiscount` | بررسی boundary عددی `Double.MAX_VALUE` و محدود ماندن نتیجه تخفیف. |
+| `failedRemovalDoesNotFreeCapacity` | بررسی atomicity؛ حذف ناموفق نباید در سبد پر یک slot آزاد کند. |
 
 Mockito استفاده نشد، چون کلاس هیچ dependency خارجی ندارد. گزارش کامل در [تحلیل کیفیت تست‌ها](docs/test-quality-analysis.md) قرار دارد.
 
@@ -202,7 +210,7 @@ Coverage می‌پرسد «چه چیزی اجرا شد؟» ولی Mutation Testi
 
 ## ۱۴. تعاملات مهم با Codex
 
-تعداد ۱۴ تعامل واقعی در طول کار ثبت شده است؛ از audit هویت‌ها و راه‌اندازی دو MCP مستقل تا تحلیل باگ، تصمیم قرارداد، طراحی Red، ارزیابی Refactor، بررسی mutant و ممیزی نهایی گزارش.
+تعداد ۱۴ تعامل واقعی در طول کار ثبت شده است؛ از تحلیل پروژه پایه و طراحی آزمایش‌ها تا بررسی باگ‌ها، تصمیم قرارداد، طراحی Red، ارزیابی Refactor، بررسی mutant و ممیزی نهایی گزارش.
 
 هر ورودی شامل Context، Request، خلاصه پاسخ Codex، نقد فنی، تصمیم، موارد پذیرفته/رد/اصلاح‌شده و نتیجه است. فایل کامل: [تعاملات Codex](docs/codex-interactions.md).
 
@@ -217,7 +225,7 @@ Coverage می‌پرسد «چه چیزی اجرا شد؟» ولی Mutation Testi
 | کیفیت تست و Mutation | [#5](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/5) | Amin | [#11](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/11) | merged |
 | گزارش و بازتولید | [#6](https://github.com/MohammadAminKoohi/Software_Workshop_3/issues/6) | Arshia | [#12](https://github.com/MohammadAminKoohi/Software_Workshop_3/pull/12) | همین PR نهایی |
 
-از squash استفاده نشد تا commitهای Red و Green در تاریخچه باقی بمانند. از PR #8 به بعد، نویسنده PR آن را merge نکرده است. PR #7 پیش از اضافه شدن این قاعده توسط حساب نویسنده merge شد. reviewهای خودکار با عنوان Automated Codex review ثبت شده‌اند و approval انسانی ساختگی ایجاد نشده است. وضعیت کارها در [GitHub Project #2](https://github.com/users/MohammadAminKoohi/projects/2) نگهداری می‌شود.
+از squash استفاده نشد تا commitهای Red و Green در تاریخچه باقی بمانند. وضعیت کارها و تقسیم مسئولیت‌ها نیز در [GitHub Project #2](https://github.com/users/MohammadAminKoohi/projects/2) قابل مشاهده است.
 
 ## ۱۶. نحوه اجرای پروژه
 
